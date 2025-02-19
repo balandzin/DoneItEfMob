@@ -12,6 +12,8 @@ extension UIColor {
     static let darkPrimary = UIColor(hex: "#040404")
     static let accentYellow = UIColor(hex: "#fed702")
     static let darkSecondary = UIColor(hex: "#272729")
+    static let darkRed = UIColor(hex: "#D70015")
+    static let actionPanel = UIColor(hex: "#C0C0C0")
     
     convenience init(hex: String, alpha: CGFloat = 1.0) {
         var hexSanitized = hex.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()

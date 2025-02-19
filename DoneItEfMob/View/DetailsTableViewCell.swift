@@ -71,6 +71,16 @@ final class DetailsTableViewCell: UITableViewCell {
         setupConstraints()
     }
     
+    func hideElements() {
+        statusIndicatorImage.isHidden = true
+        separatorView.isHidden = true
+    }
+    
+    func showElements() {
+        statusIndicatorImage.isHidden = false
+        separatorView.isHidden = false
+    }
+    
     private func style() {
         backgroundColor = .clear
         selectionStyle = .none
