@@ -45,9 +45,13 @@ final class ViewController: UIViewController {
         let tableView = UITableView()
         tableView.backgroundColor = .clear
         tableView.dataSource = self
+        tableView.delegate = self
         tableView.register(DetailsTableViewCell.self, forCellReuseIdentifier: "DetailsTableViewCell")
         return tableView
     }()
+    
+    private var overlayView: UIView?
+    private var selectedCellFrame: CGRect?
     
     // MARK: - Properties
     
@@ -110,6 +114,15 @@ final class ViewController: UIViewController {
             make.bottom.equalTo(view.safeAreaLayoutGuide)
         }
     }
+    
+    @objc private func hideOverlay() {
+        UIView.animate(withDuration: 0.3, animations: {
+            self.overlayView?.alpha = 0
+        }) { _ in
+            self.overlayView?.removeFromSuperview()
+            self.overlayView = nil
+        }
+    }
 }
 
 // MARK: - UITableViewDataSource
@@ -133,7 +146,41 @@ extension ViewController: UITableViewDataSource {
 // MARK: - UITableViewDelegate
 extension ViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
+        print(#function)
+        guard let cell = tableView.cellForRow(at: indexPath) else { return }
+        guard let window = view.window else { return }
+
+        // Получаем frame ячейки относительно экрана
+        let cellFrame = tableView.convert(cell.frame, to: window)
+        selectedCellFrame = cellFrame
+
+        // Если затемнение уже есть, удаляем его
+        overlayView?.removeFromSuperview()
+
+        // Создаем затемняющий фон
+        let overlay = UIView(frame: window.bounds)
+        overlay.backgroundColor = UIColor.black.withAlphaComponent(0.8)
+        overlay.alpha = 0
+        overlayView = overlay
+        window.addSubview(overlay)
+
+        // Создаем "вырез" в затемнении
+        let maskLayer = CAShapeLayer()
+        let path = UIBezierPath(rect: overlay.bounds)
+        let cutoutPath = UIBezierPath(roundedRect: cellFrame, cornerRadius: 12) // Скругление, если нужно
+        path.append(cutoutPath)
+        maskLayer.path = path.cgPath
+        maskLayer.fillRule = .evenOdd
+        overlay.layer.mask = maskLayer
+
+        // Анимация появления затемнения
+        UIView.animate(withDuration: 0.3) {
+            overlay.alpha = 1
+        }
+
+        // Добавляем тап для скрытия
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(hideOverlay))
+        overlay.addGestureRecognizer(tapGesture)
     }
 }
 
