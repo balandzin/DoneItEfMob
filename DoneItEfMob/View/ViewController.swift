@@ -31,6 +31,8 @@ final class ViewController: UIViewController {
             glassIconView.image = glassIconView.image?.withRenderingMode(.alwaysTemplate)
             glassIconView.tintColor = .lightGrayBackground.withAlphaComponent(0.5)
         }
+        
+        searchBar.delegate = self
         return searchBar
     }()
     
@@ -64,6 +66,7 @@ final class ViewController: UIViewController {
     // MARK: - Methods
     
     // MARK: - Private Methods
+
 }
 
 // MARK: - UITableViewDataSource
@@ -168,16 +171,6 @@ extension ViewController {
         overlay.addGestureRecognizer(tapGesture)
     }
     
-//    private func showActionPanel(below cellFrame: CGRect, in window: UIWindow) {
-//        let panelY = cellFrame.maxY + 10
-//        let width = view.frame.width - 106
-//        let x = (view.frame.width - width) / 2
-//        let panelFrame = CGRect(x: x, y: panelY, width: width, height: 132)
-//        
-//        actionPanel?.frame = panelFrame
-//        window.addSubview(actionPanel ?? UIView())
-//    }
-    
     private func showActionPanel(below cellFrame: CGRect, in window: UIWindow) {
         let width = view.frame.width - 106
         let x = (view.frame.width - width) / 2
@@ -220,6 +213,10 @@ extension ViewController {
         }
     }
     
+    @objc private func dismissKeyboard() {
+        view.endEditing(true)
+    }
+    
     private func setupUI() {
         view.addSubview(searchBar)
         searchBar.addSubview(micImage)
@@ -227,6 +224,10 @@ extension ViewController {
         
         style()
         setupConstraints()
+        
+        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tap.cancelsTouchesInView = false
+        view.addGestureRecognizer(tap)
     }
     
     private func setupConstraints() {
