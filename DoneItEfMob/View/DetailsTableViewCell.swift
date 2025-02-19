@@ -10,9 +10,12 @@ import UIKit
 final class DetailsTableViewCell: UITableViewCell {
     
     // MARK: - GUI Variables
-    private lazy var statusIndicatorImage: UIImageView = {
+    lazy var statusIndicatorImage: UIImageView = {
         let view = UIImageView()
         view.image = UIImage(named: "emptyCircle")
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(statusIndicatorTapped))
+        view.isUserInteractionEnabled = true
+        view.addGestureRecognizer(tapGesture)
         return view
     }()
     
@@ -81,6 +84,11 @@ final class DetailsTableViewCell: UITableViewCell {
         separatorView.isHidden = false
     }
     
+    @objc private func statusIndicatorTapped() {
+        //print("Статус изменен!")
+        // Добавить обработку смены статуса
+    }
+    
     private func style() {
         backgroundColor = .clear
         selectionStyle = .none
@@ -103,12 +111,14 @@ final class DetailsTableViewCell: UITableViewCell {
             make.top.equalTo(titleLabel.snp.bottom).offset(10)
             make.leading.equalTo(titleLabel)
             make.trailing.equalToSuperview()
+            make.height.equalTo(32)
         }
         
         dateLabel.snp.makeConstraints { make in
             make.top.equalTo(descriptionLabel.snp.bottom).offset(10)
             make.leading.equalTo(descriptionLabel)
             make.trailing.equalToSuperview()
+            make.height.equalTo(16)
         }
         
         separatorView.snp.makeConstraints { make in
