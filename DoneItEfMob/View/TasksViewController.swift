@@ -8,7 +8,12 @@
 import UIKit
 import SnapKit
 
-final class ViewController: UIViewController {
+protocol TasksViewControllerProtocol: AnyObject {
+    func showTasks(_ tasks: [TaskViewModel])
+    func showError(_ message: String)
+}
+
+final class TasksViewController: UIViewController, TasksViewControllerProtocol {
     
     // MARK: - GUI Variables
     private lazy var searchBar: UISearchBar = {
@@ -54,49 +59,63 @@ final class ViewController: UIViewController {
     private var selectedCell: DetailsTableViewCell?
     
     // MARK: - Properties
-    
+    var presenter: TasksPresenterProtocol!
+    private var taskViewModels: [TaskViewModel] = []
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupUI()
+        presenter.viewDidLoad()
     }
     
     // MARK: - Methods
+    func showTasks(_ tasks: [TaskViewModel]) {
+        self.taskViewModels = tasks
+        tableView.reloadData()
+    }
+    
+    func showError(_ message: String) {
+        let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
+    }
     
     // MARK: - Private Methods
-
 }
 
 // MARK: - UITableViewDataSource
-extension ViewController: UITableViewDataSource {
+extension TasksViewController: UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
         1
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        10
+        taskViewModels.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "DetailsTableViewCell", for: indexPath) as? DetailsTableViewCell else { return UITableViewCell() }
         cell.showElements()
         
+        let taskViewModel = taskViewModels[indexPath.row]
+        cell.configure(with: taskViewModel)
         
         return cell
     }
 }
 
 // MARK: - UITableViewDelegate
-extension ViewController: UITableViewDelegate {
+extension TasksViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let cell = tableView.cellForRow(at: indexPath) as? DetailsTableViewCell else { return }
         
         let touchLocation = tableView.panGestureRecognizer.location(in: cell)
         if cell.statusIndicatorImage.frame.contains(touchLocation) {
-             print("Статус изменен!")
+            print("Статус изменен!")
+            cell.toggleStatus(to: &taskViewModels[indexPath.row])
         } else {
             
             guard let window = UIApplication.shared.connectedScenes
@@ -122,18 +141,22 @@ extension ViewController: UITableViewDelegate {
             let actionPanel = ActionPanel(frame: CGRect(x: 0, y: 0, width: view.frame.width - 106, height: 132))
             
             actionPanel.onEdit = { [weak self] in
+                guard let self else { return }
                 print("Редактировать задачу")
-                self?.hideOverlay(UITapGestureRecognizer()) // Закрываем панель
+                self.hideOverlay(UITapGestureRecognizer())
+                self.navigationController?.pushViewController(DetailsViewController(task: taskViewModels[indexPath.row]), animated: true)
             }
             
             actionPanel.onShare = { [weak self] in
+                guard let self else { return }
                 print("Поделиться задачей")
-                self?.hideOverlay(UITapGestureRecognizer())
+                self.hideOverlay(UITapGestureRecognizer())
             }
             
             actionPanel.onDelete = { [weak self] in
+                guard let self else { return }
                 print("Удалить задачу")
-                self?.hideOverlay(UITapGestureRecognizer())
+                self.hideOverlay(UITapGestureRecognizer())
             }
             
             self.actionPanel = actionPanel
@@ -144,7 +167,7 @@ extension ViewController: UITableViewDelegate {
     }
 }
 
-extension ViewController {
+extension TasksViewController {
     
     private func showOverlay(for cellFrame: CGRect) {
         guard let window = UIApplication.shared.connectedScenes
@@ -176,14 +199,14 @@ extension ViewController {
         let x = (view.frame.width - width) / 2
         let panelHeight: CGFloat = 132
         let padding: CGFloat = 10
-
+        
         var panelY = cellFrame.maxY + padding
         let maxY = window.frame.height - panelHeight - view.safeAreaInsets.bottom - padding
-
+        
         if panelY > maxY {
             panelY = cellFrame.minY - panelHeight - padding
         }
-
+        
         let panelFrame = CGRect(x: x, y: panelY, width: width, height: panelHeight)
         
         actionPanel?.frame = panelFrame
@@ -271,7 +294,7 @@ extension ViewController {
 }
 
 // MARK: - UISearchBarDelegate
-extension ViewController: UISearchBarDelegate {
+extension TasksViewController: UISearchBarDelegate {
     func searchBarBookmarkButtonClicked(_ searchBar: UISearchBar) {
         print("Голосовой ввод активирован")
         // TODO: - вызов AVSpeechRecognizer

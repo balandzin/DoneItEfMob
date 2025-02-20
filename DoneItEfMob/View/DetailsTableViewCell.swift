@@ -13,9 +13,9 @@ final class DetailsTableViewCell: UITableViewCell {
     lazy var statusIndicatorImage: UIImageView = {
         let view = UIImageView()
         view.image = UIImage(named: "emptyCircle")
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(statusIndicatorTapped))
+        //let tapGesture = UITapGestureRecognizer(target: self, action: #selector(statusIndicatorTapped))
         view.isUserInteractionEnabled = true
-        view.addGestureRecognizer(tapGesture)
+        //view.addGestureRecognizer(tapGesture)
         return view
     }()
     
@@ -74,6 +74,45 @@ final class DetailsTableViewCell: UITableViewCell {
         setupConstraints()
     }
     
+    func updateLabels(for task: TaskViewModel) {
+        titleLabel.attributedText = nil
+        descriptionLabel.attributedText = nil
+        
+        titleLabel.text = task.title
+        descriptionLabel.text = task.description
+        dateLabel.text = task.date
+
+        let titleText = titleLabel.text ?? ""
+        let descriptionText = descriptionLabel.text ?? ""
+
+        let titleAttributedText = NSMutableAttributedString(string: titleText)
+        let descriptionAttributedText = NSMutableAttributedString(string: descriptionText)
+
+        if task.status {
+            titleAttributedText.addAttribute(.strikethroughStyle, value: NSUnderlineStyle.single.rawValue, range: NSRange(location: 0, length: titleText.count))
+            titleAttributedText.addAttribute(.foregroundColor, value: UIColor.lightGrayBackground.withAlphaComponent(0.5), range: NSRange(location: 0, length: titleText.count))
+            descriptionAttributedText.addAttribute(.foregroundColor, value: UIColor.lightGrayBackground.withAlphaComponent(0.5), range: NSRange(location: 0, length: descriptionText.count))
+        } else {
+            titleAttributedText.addAttribute(.foregroundColor, value: UIColor.lightGrayBackground, range: NSRange(location: 0, length: titleText.count))
+            descriptionAttributedText.addAttribute(.foregroundColor, value: UIColor.lightGrayBackground, range: NSRange(location: 0, length: descriptionText.count))
+        }
+
+        titleLabel.attributedText = titleAttributedText
+        descriptionLabel.attributedText = descriptionAttributedText
+    }
+    
+    func configure(with task: TaskViewModel) {
+        statusIndicatorImage.image = task.status ? UIImage(named: "checkedCircle") :
+        UIImage(named: "emptyCircle")
+        
+        updateLabels(for: task)
+    }
+    
+    func toggleStatus(to task: inout TaskViewModel) {
+        task.status.toggle()
+        configure(with: task)
+    }
+    
     func hideElements() {
         statusIndicatorImage.isHidden = true
         separatorView.isHidden = true
@@ -84,10 +123,10 @@ final class DetailsTableViewCell: UITableViewCell {
         separatorView.isHidden = false
     }
     
-    @objc private func statusIndicatorTapped() {
-        //print("Статус изменен!")
-        // Добавить обработку смены статуса
-    }
+//    @objc private func statusIndicatorTapped() {
+//        print("Добавить обработку смены статуса")
+//        // Добавить обработку смены статуса
+//    }
     
     private func style() {
         backgroundColor = .clear
