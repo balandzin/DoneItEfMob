@@ -8,15 +8,25 @@
 import Foundation
 
 struct TaskViewModel {
-    let title: String
-    let description: String
+    var id: Int?
+    var title: String
+    var description: String
     var status: Bool
-    let date: String
+    var date: String
     
     init(task: Task) {
+        self.id = task.id
         self.title = task.todo
         self.description = "No description"
         self.status = task.completed
         self.date =  "No date"
+    }
+    
+    init(title: String, description: String, date: String) {
+        self.id = nil
+        self.title = title
+        self.description = description
+        self.status = false
+        self.date = date
     }
 }

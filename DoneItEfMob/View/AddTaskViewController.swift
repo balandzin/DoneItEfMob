@@ -1,17 +1,13 @@
 //
-//  DetailsViewController.swift
+//  AddTaskViewController.swift
 //  DoneItEfMob
 //
-//  Created by Антон Баландин on 20.02.25.
+//  Created by Антон Баландин on 21.02.25.
 //
 
 import UIKit
-import SnapKit
 
-final class DetailsViewController: UIViewController, UITextViewDelegate {
-    
-    // MARK: - Properties
-    private var task: TaskViewModel
+final class AddTaskViewController: UIViewController {
     
     // MARK: - GUI Variables
     private lazy var titleTextView: UITextView = {
@@ -21,10 +17,11 @@ final class DetailsViewController: UIViewController, UITextViewDelegate {
         view.textColor = .lightGrayBackground
         view.textAlignment = .left
         view.isEditable = true
+        view.text = "Введите данные..."
         view.isScrollEnabled = false
         view.textContainerInset = .zero
         view.textContainer.lineFragmentPadding = 0
-        view.returnKeyType = .done // Закрытие клавиатуры по Return
+        view.returnKeyType = .done
         return view
     }()
     
@@ -32,6 +29,7 @@ final class DetailsViewController: UIViewController, UITextViewDelegate {
         let view = UILabel()
         view.font = .systemFont(ofSize: 12, weight: .regular)
         view.textColor = .lightGrayBackground.withAlphaComponent(0.5)
+        view.text = "09/10/24"
         view.textAlignment = .left
         return view
     }()
@@ -41,31 +39,24 @@ final class DetailsViewController: UIViewController, UITextViewDelegate {
         view.backgroundColor = .clear
         view.font = .systemFont(ofSize: 16, weight: .regular)
         view.textColor = .lightGrayBackground
+        view.text = "Введите данные..."
         view.textAlignment = .left
         view.isEditable = true
-        view.returnKeyType = .done // Закрытие клавиатуры по Return
+        view.returnKeyType = .done
         return view
     }()
     
-    // MARK: - Initialization
-    init(task: TaskViewModel) {
-        self.task = task
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+    // MARK: - Properties
+    var taskDidAdded: ((String, String) -> Void)?
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        loadData()
         setupNavigationBar()
         setupGestureToDismissKeyboard()
     }
-    
+
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         saveTaskChanges()
@@ -75,13 +66,13 @@ final class DetailsViewController: UIViewController, UITextViewDelegate {
     private func setupUI() {
         view.backgroundColor = .black
         
-        titleTextView.delegate = self
-        descriptionTextView.delegate = self
-        
         view.addSubview(titleTextView)
         view.addSubview(dateLabel)
         view.addSubview(descriptionTextView)
         
+        titleTextView.delegate = self
+        descriptionTextView.delegate = self
+
         setupConstraints()
     }
     
@@ -89,7 +80,7 @@ final class DetailsViewController: UIViewController, UITextViewDelegate {
         titleTextView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide).offset(5)
             make.leading.trailing.equalToSuperview().inset(16)
-            make.height.greaterThanOrEqualTo(36) // Минимальная высота
+            make.height.greaterThanOrEqualTo(36)
         }
         
         dateLabel.snp.makeConstraints { make in
@@ -105,22 +96,30 @@ final class DetailsViewController: UIViewController, UITextViewDelegate {
         }
     }
     
-    private func loadData() {
-        titleTextView.text = task.title
-        descriptionTextView.text = task.description
-        dateLabel.text = task.date
-    }
-    
     private func saveTaskChanges() {
-//        task.title = titleTextView.text
-//        task.description = descriptionTextView.text
+        let title = titleTextView.text
+        let description = descriptionTextView.text
+        
+        if title != "Введите данные..." && description != "Введите данные..." {
+            
+            if title == "Введите данные..." {
+                titleTextView.text = ""
+            }
+            
+            if description == "Введите данные..." {
+                descriptionTextView.text = ""
+            }
+            
+            taskDidAdded?(title ?? "", description ?? "")
+        }
     }
     
     private func setupNavigationBar() {
-        navigationItem.title = "" // Убираем стандартный заголовок
+        navigationItem.titleView = UIView(frame: .zero)
+        navigationController?.navigationBar.prefersLargeTitles = false
         
         let backButton = UIBarButtonItem(
-            image: UIImage(systemName: "chevron.left"), // Системная иконка
+            image: UIImage(systemName: "chevron.left"),
             style: .plain,
             target: self,
             action: #selector(didTapBack)
@@ -153,26 +152,52 @@ final class DetailsViewController: UIViewController, UITextViewDelegate {
     @objc private func dismissKeyboard() {
         view.endEditing(true)
     }
-    
-    // MARK: - UITextViewDelegate
-    func textViewDidChange(_ textView: UITextView) {
-        if textView == titleTextView {
-            updateTitleTextViewHeight()
-        }
-    }
-    
-    func textViewShouldReturn(_ textView: UITextView) -> Bool {
-        textView.resignFirstResponder()
-        return true
-    }
-    
+        
     private func updateTitleTextViewHeight() {
-        let newSize = titleTextView.sizeThatFits(CGSize(width: titleTextView.frame.width, height: CGFloat.greatestFiniteMagnitude))
+        guard let width = titleTextView.superview?.bounds.width, width > 0 else { return }
         
-        titleTextView.snp.updateConstraints { make in
-            make.height.equalTo(newSize.height)
+        let newSize = titleTextView.sizeThatFits(CGSize(width: width - 32, height: CGFloat.greatestFiniteMagnitude))
+        let newHeight = max(newSize.height, 36)
+        
+        titleTextView.snp.remakeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide).offset(5)
+            make.leading.trailing.equalToSuperview().inset(16)
+            make.height.equalTo(newHeight)
         }
         
-        view.layoutIfNeeded() // Анимированное обновление
+        UIView.animate(withDuration: 0.2) {
+            self.view.layoutIfNeeded()
+        }
+    }
+}
+
+extension AddTaskViewController: UITextViewDelegate {
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        if textView.text == "Введите данные..." {
+            textView.text = ""
+            textView.textColor = .lightGrayBackground
+        }
+    }
+    
+    func textViewDidEndEditing(_ textView: UITextView) {
+        if textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            textView.text = "Введите данные..."
+            textView.textColor = .lightGrayBackground
+        }
+    }
+
+    func textViewDidChange(_ textView: UITextView) {
+        if textView.text.isEmpty {
+            textView.text = "Введите данные..."
+            textView.textColor = .lightGrayBackground
+        }
+    }
+    
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        if text == "\n" {
+            textView.resignFirstResponder()
+            return false
+        }
+        return true
     }
 }

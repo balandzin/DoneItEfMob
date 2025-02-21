@@ -10,6 +10,7 @@ import SnapKit
 
 protocol TasksViewControllerProtocol: AnyObject {
     func showTasks(_ tasks: [TaskViewModel])
+    func showEditTask(_ task: TaskViewModel)
     func showError(_ message: String)
 }
 
@@ -52,6 +53,29 @@ final class TasksViewController: UIViewController, TasksViewControllerProtocol {
         return tableView
     }()
     
+    private lazy var bottomContainerView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .darkSecondary
+        return view
+    }()
+    
+    private lazy var tasksCountLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 13, weight: .regular)
+        label.textColor = .lightGrayBackground
+        label.textAlignment = .center
+        return label
+    }()
+    
+    private lazy var addButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(systemName: "square.and.pencil"), for: .normal)
+        button.tintColor = .accentYellow
+        button.backgroundColor = .clear
+        button.addTarget(self, action: #selector(addButtonTapped), for: .touchUpInside)
+        return button
+    }()
+    
     private var overlayView: UIView?
     private var selectedCellFrame: CGRect?
     
@@ -60,7 +84,11 @@ final class TasksViewController: UIViewController, TasksViewControllerProtocol {
     
     // MARK: - Properties
     var presenter: TasksPresenterProtocol!
-    private var taskViewModels: [TaskViewModel] = []
+    private var taskViewModels: [TaskViewModel] = [] {
+        didSet {
+            tasksCountLabel.text = "Задач: \(taskViewModels.count)"
+        }
+    }
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -80,6 +108,10 @@ final class TasksViewController: UIViewController, TasksViewControllerProtocol {
         let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default))
         present(alert, animated: true)
+    }
+    
+    func showEditTask(_ task: TaskViewModel) {
+        
     }
     
     // MARK: - Private Methods
@@ -142,9 +174,8 @@ extension TasksViewController: UITableViewDelegate {
             
             actionPanel.onEdit = { [weak self] in
                 guard let self else { return }
-                print("Редактировать задачу")
                 self.hideOverlay(UITapGestureRecognizer())
-                self.navigationController?.pushViewController(DetailsViewController(task: taskViewModels[indexPath.row]), animated: true)
+                self.presenter.didSelectTask(taskViewModels[indexPath.row])
             }
             
             actionPanel.onShare = { [weak self] in
@@ -157,6 +188,7 @@ extension TasksViewController: UITableViewDelegate {
                 guard let self else { return }
                 print("Удалить задачу")
                 self.hideOverlay(UITapGestureRecognizer())
+                self.presenter.deleteTask(taskViewModels[indexPath.row], from: taskViewModels)
             }
             
             self.actionPanel = actionPanel
@@ -213,6 +245,10 @@ extension TasksViewController {
         window.addSubview(actionPanel ?? UIView())
     }
     
+    @objc private func addButtonTapped() {
+        presenter.didAddTask()
+    }
+    
     @objc private func hideOverlay(_ sender: UITapGestureRecognizer) {
         UIView.animate(withDuration: 0.2, animations: { [weak self] in
             self?.overlayView?.alpha = 0
@@ -244,6 +280,9 @@ extension TasksViewController {
         view.addSubview(searchBar)
         searchBar.addSubview(micImage)
         view.addSubview(tableView)
+        view.addSubview(bottomContainerView)
+        view.addSubview(tasksCountLabel)
+        view.addSubview(addButton)
         
         style()
         setupConstraints()
@@ -270,7 +309,24 @@ extension TasksViewController {
         tableView.snp.makeConstraints { make in
             make.top.equalTo(searchBar.snp.bottom).offset(10)
             make.leading.trailing.equalToSuperview().inset(16)
-            make.bottom.equalTo(view.safeAreaLayoutGuide)
+            make.bottom.equalTo(bottomContainerView.snp.top)
+        }
+        
+        bottomContainerView.snp.makeConstraints { make in
+            make.height.equalTo(83)
+            make.leading.trailing.equalToSuperview()
+            make.bottom.equalToSuperview()
+        }
+    
+        tasksCountLabel.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview().inset(16)
+            make.centerY.equalTo(addButton)
+        }
+        
+        addButton.snp.makeConstraints { make in
+            make.trailing.equalToSuperview().inset(16)
+            make.top.equalTo(bottomContainerView).inset(16)
+            make.width.height.equalTo(28)
         }
     }
     

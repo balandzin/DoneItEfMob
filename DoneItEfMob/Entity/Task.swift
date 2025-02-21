@@ -8,6 +8,7 @@
 import Foundation
 
 struct Task: Decodable {
+    let id: Int
     let todo: String
     let completed: Bool
 }
