@@ -27,7 +27,6 @@ final class TasksPresenter: TasksPresenterProtocol {
     var router: TaskRouterProtocol
     
     private var tasksList: [TaskViewModel] = [] {
-        
         didSet {
             DispatchQueue.main.async { [weak self] in
                 guard let self else { return }
@@ -70,9 +69,6 @@ final class TasksPresenter: TasksPresenterProtocol {
     func didEditTask(_ task: TaskViewModel) {
         interactor.updateTaskInCoreData(task)
         tasksList = interactor.loadTasksFromCoreData()
-        DispatchQueue.main.async { [weak self] in
-            self?.view?.showTasks(self?.tasksList ?? [])
-        }
     }
     
     func didAddTask() {
