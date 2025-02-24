@@ -81,5 +81,4 @@ final class TaskRouter: TaskRouterProtocol {
         
         viewController?.present(activityViewController, animated: true, completion: nil)
     }
-    
 }

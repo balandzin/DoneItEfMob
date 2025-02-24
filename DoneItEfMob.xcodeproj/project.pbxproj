@@ -8,16 +8,21 @@
 
 /* Begin PBXBuildFile section */
 		D3A627A52D64B5BD0005A54F /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = D3A627A42D64B5BD0005A54F /* SnapKit */; };
-		D3A627FC2D6C80560005A54F /* TasksCoreData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = D3A627FA2D6C80560005A54F /* TasksCoreData.xcdatamodeld */; };
-		D3A627FF2D6C80E20005A54F /* TaskEntity+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3A627FE2D6C80E20005A54F /* TaskEntity+CoreDataProperties.swift */; };
-		D3A628002D6C80E20005A54F /* TaskEntity+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3A627FD2D6C80E20005A54F /* TaskEntity+CoreDataClass.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		D3A628352D6CBA2C0005A54F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D3A6275F2D64A5070005A54F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D3A627662D64A5080005A54F;
+			remoteInfo = DoneItEfMob;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		D3A627672D64A5080005A54F /* DoneItEfMob.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DoneItEfMob.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		D3A627FB2D6C80560005A54F /* TasksCoreData.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = TasksCoreData.xcdatamodel; sourceTree = "<group>"; };
-		D3A627FD2D6C80E20005A54F /* TaskEntity+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TaskEntity+CoreDataClass.swift"; sourceTree = "<group>"; };
-		D3A627FE2D6C80E20005A54F /* TaskEntity+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TaskEntity+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		D3A628312D6CBA2C0005A54F /* DoneItEfMobTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DoneItEfMobTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -39,6 +44,16 @@
 			path = DoneItEfMob;
 			sourceTree = "<group>";
 		};
+		D3A628012D6CAFAC0005A54F /* CoreData */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = CoreData;
+			sourceTree = "<group>";
+		};
+		D3A628322D6CBA2C0005A54F /* DoneItEfMobTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = DoneItEfMobTests;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -50,16 +65,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D3A6282E2D6CBA2C0005A54F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		D3A6275E2D64A5070005A54F = {
 			isa = PBXGroup;
 			children = (
-				D3A627FD2D6C80E20005A54F /* TaskEntity+CoreDataClass.swift */,
-				D3A627FE2D6C80E20005A54F /* TaskEntity+CoreDataProperties.swift */,
-				D3A627FA2D6C80560005A54F /* TasksCoreData.xcdatamodeld */,
+				D3A628012D6CAFAC0005A54F /* CoreData */,
 				D3A627692D64A5080005A54F /* DoneItEfMob */,
+				D3A628322D6CBA2C0005A54F /* DoneItEfMobTests */,
 				D3A627682D64A5080005A54F /* Products */,
 			);
 			sourceTree = "<group>";
@@ -68,6 +89,7 @@
 			isa = PBXGroup;
 			children = (
 				D3A627672D64A5080005A54F /* DoneItEfMob.app */,
+				D3A628312D6CBA2C0005A54F /* DoneItEfMobTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -89,6 +111,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				D3A627692D64A5080005A54F /* DoneItEfMob */,
+				D3A628012D6CAFAC0005A54F /* CoreData */,
 			);
 			name = DoneItEfMob;
 			packageProductDependencies = (
@@ -97,6 +120,29 @@
 			productName = DoneItEfMob;
 			productReference = D3A627672D64A5080005A54F /* DoneItEfMob.app */;
 			productType = "com.apple.product-type.application";
+		};
+		D3A628302D6CBA2C0005A54F /* DoneItEfMobTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D3A628372D6CBA2C0005A54F /* Build configuration list for PBXNativeTarget "DoneItEfMobTests" */;
+			buildPhases = (
+				D3A6282D2D6CBA2C0005A54F /* Sources */,
+				D3A6282E2D6CBA2C0005A54F /* Frameworks */,
+				D3A6282F2D6CBA2C0005A54F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D3A628362D6CBA2C0005A54F /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				D3A628322D6CBA2C0005A54F /* DoneItEfMobTests */,
+			);
+			name = DoneItEfMobTests;
+			packageProductDependencies = (
+			);
+			productName = DoneItEfMobTests;
+			productReference = D3A628312D6CBA2C0005A54F /* DoneItEfMobTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
@@ -110,6 +156,10 @@
 				TargetAttributes = {
 					D3A627662D64A5080005A54F = {
 						CreatedOnToolsVersion = 16.2;
+					};
+					D3A628302D6CBA2C0005A54F = {
+						CreatedOnToolsVersion = 16.2;
+						TestTargetID = D3A627662D64A5080005A54F;
 					};
 				};
 			};
@@ -131,12 +181,20 @@
 			projectRoot = "";
 			targets = (
 				D3A627662D64A5080005A54F /* DoneItEfMob */,
+				D3A628302D6CBA2C0005A54F /* DoneItEfMobTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		D3A627652D64A5080005A54F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D3A6282F2D6CBA2C0005A54F /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -150,13 +208,25 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D3A627FF2D6C80E20005A54F /* TaskEntity+CoreDataProperties.swift in Sources */,
-				D3A628002D6C80E20005A54F /* TaskEntity+CoreDataClass.swift in Sources */,
-				D3A627FC2D6C80560005A54F /* TasksCoreData.xcdatamodeld in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D3A6282D2D6CBA2C0005A54F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		D3A628362D6CBA2C0005A54F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D3A627662D64A5080005A54F /* DoneItEfMob */;
+			targetProxy = D3A628352D6CBA2C0005A54F /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		D3A6277B2D64A50A0005A54F /* Debug */ = {
@@ -342,6 +412,42 @@
 			};
 			name = Release;
 		};
+		D3A628382D6CBA2C0005A54F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = NJJ6TC72GU;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = org.balandzin.DoneItEfMobTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DoneItEfMob.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/DoneItEfMob";
+			};
+			name = Debug;
+		};
+		D3A628392D6CBA2C0005A54F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = NJJ6TC72GU;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = org.balandzin.DoneItEfMobTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DoneItEfMob.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/DoneItEfMob";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -359,6 +465,15 @@
 			buildConfigurations = (
 				D3A6277B2D64A50A0005A54F /* Debug */,
 				D3A6277C2D64A50A0005A54F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D3A628372D6CBA2C0005A54F /* Build configuration list for PBXNativeTarget "DoneItEfMobTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D3A628382D6CBA2C0005A54F /* Debug */,
+				D3A628392D6CBA2C0005A54F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -383,19 +498,6 @@
 			productName = SnapKit;
 		};
 /* End XCSwiftPackageProductDependency section */
-
-/* Begin XCVersionGroup section */
-		D3A627FA2D6C80560005A54F /* TasksCoreData.xcdatamodeld */ = {
-			isa = XCVersionGroup;
-			children = (
-				D3A627FB2D6C80560005A54F /* TasksCoreData.xcdatamodel */,
-			);
-			currentVersion = D3A627FB2D6C80560005A54F /* TasksCoreData.xcdatamodel */;
-			path = TasksCoreData.xcdatamodeld;
-			sourceTree = "<group>";
-			versionGroupType = wrapper.xcdatamodel;
-		};
-/* End XCVersionGroup section */
 	};
 	rootObject = D3A6275F2D64A5070005A54F /* Project object */;
 }

@@ -11,12 +11,10 @@ import Speech
 
 protocol TasksViewControllerProtocol: AnyObject {
     func showTasks(_ tasks: [TaskViewModel])
-    func showEditTask(_ task: TaskViewModel)
     func showError(_ message: String)
 }
 
 final class TasksViewController: UIViewController, TasksViewControllerProtocol {
-    
     // MARK: - GUI Variables
     private lazy var searchBar: UISearchBar = {
         let searchBar = UISearchBar()
@@ -162,7 +160,7 @@ final class TasksViewController: UIViewController, TasksViewControllerProtocol {
             guard let self = self, let result = result else { return }
             
             self.searchBar.text = result.bestTranscription.formattedString
-            self.searchTasks1(with: result.bestTranscription.formattedString)
+            self.searchVoiceTasks(with: result.bestTranscription.formattedString)
             
             if result.isFinal || error != nil {
                 self.stopListening()
@@ -189,7 +187,7 @@ final class TasksViewController: UIViewController, TasksViewControllerProtocol {
         }
     }
     
-    private func searchTasks1(with text: String) {
+    private func searchVoiceTasks(with text: String) {
         if text.isEmpty {
             presenter.viewDidLoad()
         } else {
