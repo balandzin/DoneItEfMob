@@ -11,6 +11,7 @@ import CoreData
 protocol TaskRouterProtocol: AnyObject {
     func showTaskDetails(task: TaskViewModel, with date: String)
     func addTask()
+    func onShare(_ task: String)
 }
 
 final class TaskRouter: TaskRouterProtocol {
@@ -63,4 +64,19 @@ final class TaskRouter: TaskRouterProtocol {
         
         viewController?.navigationController?.pushViewController(addTaskVC, animated: true)
     }
+    
+    func onShare(_ task: String) {
+        let activityViewController = UIActivityViewController(activityItems: [task], applicationActivities: nil)
+        
+        if let popoverController = activityViewController.popoverPresentationController {
+            popoverController.sourceView = viewController?.view
+            popoverController.sourceRect = CGRect(x: viewController?.view.bounds.midX ?? 0,
+                                                   y: viewController?.view.bounds.midY ?? 0,
+                                                   width: 0,
+                                                   height: 0)
+        }
+        
+        viewController?.present(activityViewController, animated: true, completion: nil)
+    }
+
 }

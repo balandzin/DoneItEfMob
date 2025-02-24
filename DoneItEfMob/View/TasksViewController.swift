@@ -182,6 +182,11 @@ extension TasksViewController: UITableViewDelegate {
                 guard let self else { return }
                 print("Поделиться задачей")
                 self.hideOverlay(UITapGestureRecognizer())
+                
+                let task = taskViewModels[indexPath.row]
+                
+                presenter.onShare(task)
+                
             }
             
             actionPanel.onDelete = { [weak self] in
