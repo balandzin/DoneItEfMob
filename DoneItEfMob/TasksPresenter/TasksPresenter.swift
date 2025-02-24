@@ -9,14 +9,8 @@ import Foundation
 
 protocol TasksPresenterProtocol: AnyObject {
     func viewDidLoad()
-    
-    
     func didFailToLoadTasks(error: String)
-    //func didFetchTasks(_ tasks: [TaskViewModel])
-    
     func didFetchTasks()
-    
-    
     func didSelectTask(_ task: TaskViewModel)
     func didEditTask(_ task: TaskViewModel)
     func didAddTask()
@@ -26,8 +20,8 @@ protocol TasksPresenterProtocol: AnyObject {
 }
 
 final class TasksPresenter: TasksPresenterProtocol {
-   
     
+    // MARK: - Properties
     weak var view: TasksViewControllerProtocol?
     var interactor: TasksInteractorProtocol
     var router: TaskRouterProtocol
@@ -42,37 +36,25 @@ final class TasksPresenter: TasksPresenterProtocol {
         }
     }
     
+    // MARK: - Initialization
     init(view: TasksViewControllerProtocol, interactor: TasksInteractorProtocol, router: TaskRouterProtocol) {
         self.view = view
         self.interactor = interactor
         self.router = router
     }
     
+    // MARK: - Lifecycle
     func viewDidLoad() {
         tasksList = interactor.loadTasksFromCoreData()
         if tasksList.isEmpty {
             interactor.fetchTasks()
-        } else {
-            //view?.showTasks(tasksList)
         }
     }
     
+    // MARK: - Methods
     func didFetchTasks() {
         tasksList = interactor.loadTasksFromCoreData()
-        
-//        DispatchQueue.main.async { [weak self] in
-//            guard let self else { return }
-//            self.view?.showTasks(self.tasksList)
-//        }
     }
-    
-    //    func didFetchTasks(_ tasks: [TaskViewModel]) {
-    //        tasksList = tasks
-    //        interactor.saveTasksToCoreData(tasksList)
-    //        DispatchQueue.main.async {
-    //            self.view?.showTasks(tasks)
-    //        }
-    //    }
     
     func didFailToLoadTasks(error: String) {
         DispatchQueue.main.async { [weak self] in
@@ -102,18 +84,11 @@ final class TasksPresenter: TasksPresenterProtocol {
         let task = TaskViewModel(title: title, description: description, date: date)
         interactor.saveTaskToCoreData(task)
         tasksList = interactor.loadTasksFromCoreData()
-        
-//        DispatchQueue.main.async { [weak self] in
-//            self?.view?.showTasks(self?.tasksList ?? [])
-//        }
     }
     
     func deleteTask(_ task: TaskViewModel) {
         interactor.deleteTaskFromCoreData(task)
         tasksList = interactor.loadTasksFromCoreData()
-//        DispatchQueue.main.async { [weak self] in
-//            self?.view?.showTasks(self?.tasksList ?? [])
-//        }
     }
     
     func onShare(_ task: TaskViewModel) {
@@ -121,5 +96,3 @@ final class TasksPresenter: TasksPresenterProtocol {
         router.onShare(taskDetails)
     }
 }
-
-

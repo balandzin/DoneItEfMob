@@ -19,49 +19,25 @@ protocol TasksInteractorProtocol: AnyObject {
 }
 
 final class TasksInteractor: TasksInteractorProtocol {
+    
+    // MARK: - Properties
     weak var presenter: TasksPresenterProtocol?
     private let persistentContainer: NSPersistentContainer
     
+    // MARK: - Initialization
     init(persistentContainer: NSPersistentContainer) {
         self.persistentContainer = persistentContainer
     }
     
+    // MARK: - Methods
     func fetchTasks() {
         loadTasksFromJSON()
     }
     
-    private func loadTasksFromJSON() {
-        guard let url = Bundle.main.url(forResource: "data", withExtension: "json") else {
-            presenter?.didFailToLoadTasks(error: "Failed to locate data.json in bundle")
-            return
-        }
-        
-        do {
-            let data = try Data(contentsOf: url)
-            let decodedData = try JSONDecoder().decode(TasksResponse.self, from: data)
-            let tasks = decodedData.todos.map { TaskViewModel(task: $0) }
-            saveTasksToCoreData(tasks)
-        } catch {
-            presenter?.didFailToLoadTasks(error: "Failed to parse JSON: \(error.localizedDescription)")
-        }
-    }
-    
     func saveTasksToCoreData(_ tasks: [TaskViewModel]) {
-        //let context = persistentContainer.viewContext
         tasks.forEach { saveTaskToCoreData($0) }
-        
         presenter?.didFetchTasks()
     }
-    
-//    func loadTasksFromCoreData() -> [TaskViewModel] {
-//        let context = persistentContainer.viewContext
-//        let fetchRequest: NSFetchRequest<TaskEntity> = TaskEntity.fetchRequest()
-//        do {
-//            return try context.fetch(fetchRequest).map { TaskViewModel(entity: $0) }
-//        } catch {
-//            return []
-//        }
-//    }
     
     func loadTasksFromCoreData() -> [TaskViewModel] {
         let context = persistentContainer.viewContext
@@ -94,7 +70,7 @@ final class TasksInteractor: TasksInteractorProtocol {
             return []
         }
     }
-
+    
     
     func saveTaskToCoreData(_ task: TaskViewModel) {
         let context = persistentContainer.viewContext
@@ -109,7 +85,7 @@ final class TasksInteractor: TasksInteractorProtocol {
     
     func updateTaskInCoreData(_ task: TaskViewModel) {
         guard let taskId = task.id else { return }
-
+        
         let context = persistentContainer.viewContext
         let fetchRequest: NSFetchRequest<TaskEntity> = TaskEntity.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "id == %lld", taskId)
@@ -160,6 +136,23 @@ final class TasksInteractor: TasksInteractorProtocol {
         } while taskList.contains(where: { $0.id ?? -1 == uniqueId })
         
         return uniqueId
+    }
+    
+    // MARK: - Private Methods
+    private func loadTasksFromJSON() {
+        guard let url = Bundle.main.url(forResource: "data", withExtension: "json") else {
+            presenter?.didFailToLoadTasks(error: "Failed to locate data.json in bundle")
+            return
+        }
+        
+        do {
+            let data = try Data(contentsOf: url)
+            let decodedData = try JSONDecoder().decode(TasksResponse.self, from: data)
+            let tasks = decodedData.todos.map { TaskViewModel(task: $0) }
+            saveTasksToCoreData(tasks)
+        } catch {
+            presenter?.didFailToLoadTasks(error: "Failed to parse JSON: \(error.localizedDescription)")
+        }
     }
     
 }

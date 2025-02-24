@@ -31,10 +31,10 @@ struct TaskViewModel {
     }
     
     init(entity: TaskEntity) {
-            self.id = Int(entity.id)
-            self.title = entity.title ?? "Untitled"
-            self.description = entity.taskDescription ?? "No description"
-            self.status = entity.status
-            self.date = entity.date ?? "No date"
+        self.id = Int(entity.id)
+        self.title = entity.title ?? "Untitled"
+        self.description = entity.taskDescription ?? "No description"
+        self.status = entity.status
+        self.date = entity.date ?? "No date"
     }
 }

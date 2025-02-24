@@ -13,9 +13,7 @@ final class DetailsTableViewCell: UITableViewCell {
     lazy var statusIndicatorImage: UIImageView = {
         let view = UIImageView()
         view.image = UIImage(named: "emptyCircle")
-        //let tapGesture = UITapGestureRecognizer(target: self, action: #selector(statusIndicatorTapped))
         view.isUserInteractionEnabled = true
-        //view.addGestureRecognizer(tapGesture)
         return view
     }()
     
@@ -57,7 +55,7 @@ final class DetailsTableViewCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupUI()
     }
-
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -81,22 +79,42 @@ final class DetailsTableViewCell: UITableViewCell {
         titleLabel.text = task.title
         descriptionLabel.text = task.description
         dateLabel.text = task.date
-
+        
         let titleText = titleLabel.text ?? ""
         let descriptionText = descriptionLabel.text ?? ""
-
+        
         let titleAttributedText = NSMutableAttributedString(string: titleText)
         let descriptionAttributedText = NSMutableAttributedString(string: descriptionText)
-
+        
         if task.status {
-            titleAttributedText.addAttribute(.strikethroughStyle, value: NSUnderlineStyle.single.rawValue, range: NSRange(location: 0, length: titleText.count))
-            titleAttributedText.addAttribute(.foregroundColor, value: UIColor.lightGrayBackground.withAlphaComponent(0.5), range: NSRange(location: 0, length: titleText.count))
-            descriptionAttributedText.addAttribute(.foregroundColor, value: UIColor.lightGrayBackground.withAlphaComponent(0.5), range: NSRange(location: 0, length: descriptionText.count))
+            titleAttributedText.addAttribute(
+                .strikethroughStyle,
+                value: NSUnderlineStyle.single.rawValue,
+                range: NSRange(location: 0, length: titleText.count)
+            )
+            titleAttributedText.addAttribute(
+                .foregroundColor,
+                value: UIColor.lightGrayBackground.withAlphaComponent(0.5),
+                range: NSRange(location: 0, length: titleText.count)
+            )
+            descriptionAttributedText.addAttribute(
+                .foregroundColor,
+                value: UIColor.lightGrayBackground.withAlphaComponent(0.5),
+                range: NSRange(location: 0, length: descriptionText.count)
+            )
         } else {
-            titleAttributedText.addAttribute(.foregroundColor, value: UIColor.lightGrayBackground, range: NSRange(location: 0, length: titleText.count))
-            descriptionAttributedText.addAttribute(.foregroundColor, value: UIColor.lightGrayBackground, range: NSRange(location: 0, length: descriptionText.count))
+            titleAttributedText.addAttribute(
+                .foregroundColor,
+                value: UIColor.lightGrayBackground,
+                range: NSRange(location: 0, length: titleText.count)
+            )
+            descriptionAttributedText.addAttribute(
+                .foregroundColor,
+                value: UIColor.lightGrayBackground,
+                range: NSRange(location: 0, length: descriptionText.count)
+            )
         }
-
+        
         titleLabel.attributedText = titleAttributedText
         descriptionLabel.attributedText = descriptionAttributedText
     }
@@ -122,11 +140,6 @@ final class DetailsTableViewCell: UITableViewCell {
         statusIndicatorImage.isHidden = false
         separatorView.isHidden = false
     }
-    
-//    @objc private func statusIndicatorTapped() {
-//        print("Добавить обработку смены статуса")
-//        // Добавить обработку смены статуса
-//    }
     
     private func style() {
         backgroundColor = .clear
@@ -168,4 +181,3 @@ final class DetailsTableViewCell: UITableViewCell {
         }
     }
 }
-

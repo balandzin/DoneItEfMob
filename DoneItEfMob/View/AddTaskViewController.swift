@@ -55,7 +55,7 @@ final class AddTaskViewController: UIViewController {
         setupNavigationBar()
         setupGestureToDismissKeyboard()
     }
-
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         saveTaskChanges()
@@ -71,7 +71,7 @@ final class AddTaskViewController: UIViewController {
         
         titleTextView.delegate = self
         descriptionTextView.delegate = self
-
+        
         setupConstraints()
     }
     
@@ -143,15 +143,6 @@ final class AddTaskViewController: UIViewController {
         view.addGestureRecognizer(tapGesture)
     }
     
-    // MARK: - Actions
-    @objc private func didTapBack() {
-        navigationController?.popViewController(animated: true)
-    }
-    
-    @objc private func dismissKeyboard() {
-        view.endEditing(true)
-    }
-        
     private func updateTitleTextViewHeight() {
         guard let width = titleTextView.superview?.bounds.width, width > 0 else { return }
         
@@ -167,6 +158,15 @@ final class AddTaskViewController: UIViewController {
         UIView.animate(withDuration: 0.2) {
             self.view.layoutIfNeeded()
         }
+    }
+    
+    // MARK: - Actions
+    @objc private func didTapBack() {
+        navigationController?.popViewController(animated: true)
+    }
+    
+    @objc private func dismissKeyboard() {
+        view.endEditing(true)
     }
 }
 
@@ -184,7 +184,7 @@ extension AddTaskViewController: UITextViewDelegate {
             textView.textColor = .lightGrayBackground
         }
     }
-
+    
     func textViewDidChange(_ textView: UITextView) {
         if textView.text.isEmpty {
             textView.text = "Введите данные..."

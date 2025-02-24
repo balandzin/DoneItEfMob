@@ -160,15 +160,6 @@ final class EditViewController: UIViewController {
         view.addGestureRecognizer(tapGesture)
     }
     
-    // MARK: - Actions
-    @objc private func didTapBack() {
-        navigationController?.popViewController(animated: true)
-    }
-    
-    @objc private func dismissKeyboard() {
-        view.endEditing(true)
-    }
-    
     private func updateTitleTextViewHeight() {
         guard let width = titleTextView.superview?.bounds.width, width > 0 else { return }
 
@@ -184,6 +175,15 @@ final class EditViewController: UIViewController {
         UIView.animate(withDuration: 0.2) {
             self.view.layoutIfNeeded()
         }
+    }
+    
+    // MARK: - Actions
+    @objc private func didTapBack() {
+        navigationController?.popViewController(animated: true)
+    }
+    
+    @objc private func dismissKeyboard() {
+        view.endEditing(true)
     }
 }
 

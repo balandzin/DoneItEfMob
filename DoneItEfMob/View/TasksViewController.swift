@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import Speech
 
 protocol TasksViewControllerProtocol: AnyObject {
     func showTasks(_ tasks: [TaskViewModel])
@@ -42,7 +43,13 @@ final class TasksViewController: UIViewController, TasksViewControllerProtocol {
         return searchBar
     }()
     
-    private lazy var micImage: UIImageView = UIImageView(image: UIImage(named: "micImage"))
+    private lazy var micImage: UIImageView = {
+        let imageView = UIImageView(image: UIImage(named: "micImage"))
+        imageView.isUserInteractionEnabled = true
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(micTapped))
+        imageView.addGestureRecognizer(tapGesture)
+        return imageView
+    }()
     
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
@@ -78,9 +85,13 @@ final class TasksViewController: UIViewController, TasksViewControllerProtocol {
     
     private var overlayView: UIView?
     private var selectedCellFrame: CGRect?
-    
     private var actionPanel: ActionPanel?
     private var selectedCell: DetailsTableViewCell?
+    
+    private let speechRecognizer = SFSpeechRecognizer()
+    private let audioEngine = AVAudioEngine()
+    private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
+    private var recognitionTask: SFSpeechRecognitionTask?
     
     // MARK: - Properties
     var presenter: TasksPresenterProtocol!
@@ -96,6 +107,7 @@ final class TasksViewController: UIViewController, TasksViewControllerProtocol {
         
         setupUI()
         presenter.viewDidLoad()
+        requestSpeechAuthorization()
     }
     
     // MARK: - Methods
@@ -110,11 +122,84 @@ final class TasksViewController: UIViewController, TasksViewControllerProtocol {
         present(alert, animated: true)
     }
     
-    func showEditTask(_ task: TaskViewModel) {
-        
+    // MARK: - Private Methods
+    @objc private func micTapped() {
+        if audioEngine.isRunning {
+            stopListening()
+        } else {
+            startListening()
+        }
     }
     
-    // MARK: - Private Methods
+    private func startListening() {
+        guard let recognizer = speechRecognizer, recognizer.isAvailable else { return }
+        
+        recognitionTask?.cancel()
+        recognitionTask = nil
+        
+        let request = SFSpeechAudioBufferRecognitionRequest()
+        recognitionRequest = request
+        
+        let inputNode = audioEngine.inputNode
+        
+        inputNode.removeTap(onBus: 0)
+        
+        let recordingFormat = inputNode.outputFormat(forBus: 0)
+        inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { (buffer, _) in
+            request.append(buffer)
+        }
+        
+        audioEngine.prepare()
+        
+        do {
+            try audioEngine.start()
+        } catch {
+            showError("Ошибка запуска аудиодвижка")
+            return
+        }
+        
+        recognitionTask = recognizer.recognitionTask(with: request) { [weak self] result, error in
+            guard let self = self, let result = result else { return }
+            
+            self.searchBar.text = result.bestTranscription.formattedString
+            self.searchTasks1(with: result.bestTranscription.formattedString)
+            
+            if result.isFinal || error != nil {
+                self.stopListening()
+            }
+        }
+    }
+    
+    private func stopListening() {
+        audioEngine.stop()
+        audioEngine.inputNode.removeTap(onBus: 0)
+        recognitionRequest?.endAudio()
+        recognitionTask?.cancel()
+        recognitionRequest = nil
+        recognitionTask = nil
+    }
+    
+    private func requestSpeechAuthorization() {
+        SFSpeechRecognizer.requestAuthorization { status in
+            DispatchQueue.main.async {
+                if status != .authorized {
+                    self.showError("Speech recognition access denied.")
+                }
+            }
+        }
+    }
+    
+    private func searchTasks1(with text: String) {
+        if text.isEmpty {
+            presenter.viewDidLoad()
+        } else {
+            let filteredTasks = taskViewModels.filter {
+                $0.title.lowercased().contains(text.lowercased()) ||
+                $0.description.lowercased().contains(text.lowercased())
+            }
+            showTasks(filteredTasks)
+        }
+    }
 }
 
 // MARK: - UITableViewDataSource
@@ -146,7 +231,6 @@ extension TasksViewController: UITableViewDelegate {
         
         let touchLocation = tableView.panGestureRecognizer.location(in: cell)
         if cell.statusIndicatorImage.frame.contains(touchLocation) {
-            print("Статус изменен!")
             cell.toggleStatus(to: &taskViewModels[indexPath.row])
         } else {
             
@@ -156,18 +240,15 @@ extension TasksViewController: UITableViewDelegate {
             
             selectedCell = cell
             
-            // Вычисляем координаты ячейки
             let cellFrame = tableView.convert(cell.frame, to: window)
             selectedCellFrame = cellFrame
             
-            // ✅ Делаем рамку и фон у выбранной ячейки
             cell.layer.cornerRadius = 12
             cell.layer.masksToBounds = true
             cell.backgroundColor = .darkSecondary
             
             cell.hideElements()
             
-            // ✅ Показываем затемнение
             showOverlay(for: cellFrame)
             
             let actionPanel = ActionPanel(frame: CGRect(x: 0, y: 0, width: view.frame.width - 106, height: 132))
@@ -180,25 +261,20 @@ extension TasksViewController: UITableViewDelegate {
             
             actionPanel.onShare = { [weak self] in
                 guard let self else { return }
-                print("Поделиться задачей")
                 self.hideOverlay(UITapGestureRecognizer())
                 
                 let task = taskViewModels[indexPath.row]
-                
                 presenter.onShare(task)
-                
             }
             
             actionPanel.onDelete = { [weak self] in
                 guard let self else { return }
-                print("Удалить задачу")
                 self.hideOverlay(UITapGestureRecognizer())
                 self.presenter.deleteTask(taskViewModels[indexPath.row])
             }
             
             self.actionPanel = actionPanel
             
-            // ✅ Добавляем панель действий под ячейку
             showActionPanel(below: cellFrame, in: window)
         }
     }
@@ -263,11 +339,9 @@ extension TasksViewController {
             self.overlayView?.removeFromSuperview()
             self.overlayView = nil
             
-            // Сбрасываем стили выделенной ячейки
             self.selectedCell?.backgroundColor = .clear
             self.selectedCell = nil
             
-            // Удаляем панель
             self.actionPanel?.removeFromSuperview()
             self.actionPanel = nil
             
@@ -322,7 +396,7 @@ extension TasksViewController {
             make.leading.trailing.equalToSuperview()
             make.bottom.equalToSuperview()
         }
-    
+        
         tasksCountLabel.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(16)
             make.centerY.equalTo(addButton)
@@ -341,14 +415,11 @@ extension TasksViewController {
         
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
-        //appearance.titleTextAttributes = [.foregroundColor: UIColor.lightGrayBackground]
         appearance.backgroundColor = .clear
         appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.lightGrayBackground]
         
         navigationController?.navigationBar.standardAppearance = appearance
         navigationController?.navigationBar.scrollEdgeAppearance = appearance
-        //navigationController?.navigationBar.compactAppearance = appearance
-        
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.largeTitleDisplayMode = .always
     }
@@ -356,9 +427,17 @@ extension TasksViewController {
 
 // MARK: - UISearchBarDelegate
 extension TasksViewController: UISearchBarDelegate {
-    func searchBarBookmarkButtonClicked(_ searchBar: UISearchBar) {
-        print("Голосовой ввод активирован")
-        // TODO: - вызов AVSpeechRecognizer
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        searchTasks(with: searchText)
+    }
+    
+    private func searchTasks(with text: String) {
+        if text.isEmpty {
+            presenter.viewDidLoad()
+        } else {
+            let filteredTasks = taskViewModels.filter { $0.title.lowercased().contains(text.lowercased()) || $0.description.lowercased().contains(text.lowercased())  }
+            showTasks(filteredTasks)
+        }
     }
 }
-

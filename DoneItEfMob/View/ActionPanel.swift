@@ -38,6 +38,7 @@ final class ActionPanel: UIView {
     var onShare: (() -> Void)?
     var onDelete: (() -> Void)?
     
+    // MARK: - Initialization
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -49,6 +50,7 @@ final class ActionPanel: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Private Methods
     @objc private func handleTapEdit() {
         onEdit?()
     }
@@ -62,9 +64,18 @@ final class ActionPanel: UIView {
     }
     
     private func addTargets() {
-        let tapGestureEdit = UITapGestureRecognizer(target: self, action: #selector(handleTapEdit))
-        let tapGestureShare = UITapGestureRecognizer(target: self, action: #selector(handleTapShare))
-        let tapGestureDelete = UITapGestureRecognizer(target: self, action: #selector(handleTapDelete))
+        let tapGestureEdit = UITapGestureRecognizer(
+            target: self,
+            action: #selector(handleTapEdit)
+        )
+        let tapGestureShare = UITapGestureRecognizer(
+            target: self,
+            action: #selector(handleTapShare)
+        )
+        let tapGestureDelete = UITapGestureRecognizer(
+            target: self,
+            action: #selector(handleTapDelete)
+        )
         
         row1.addGestureRecognizer(tapGestureEdit)
         row2.addGestureRecognizer(tapGestureShare)
