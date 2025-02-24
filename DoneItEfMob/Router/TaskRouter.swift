@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import CoreData
 
 protocol TaskRouterProtocol: AnyObject {
     func showTaskDetails(task: TaskViewModel, with date: String)
@@ -18,7 +19,18 @@ final class TaskRouter: TaskRouterProtocol {
     
     static func createModule() -> UIViewController {
         let controller = TasksViewController()
-        let interactor = TasksInteractor()
+        
+        let persistentContainer: NSPersistentContainer = {
+                let container = NSPersistentContainer(name: "TasksCoreData")
+                container.loadPersistentStores(completionHandler: { (storeDescription, error) in
+                    if let error = error as NSError? {
+                        fatalError("Unresolved error \(error), \(error.userInfo)")
+                    }
+                })
+                return container
+            }()
+        
+        let interactor = TasksInteractor(persistentContainer: persistentContainer)
         let router = TaskRouter()
         let presenter = TasksPresenter(view: controller, interactor: interactor, router: router)
 

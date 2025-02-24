@@ -8,10 +8,16 @@
 
 /* Begin PBXBuildFile section */
 		D3A627A52D64B5BD0005A54F /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = D3A627A42D64B5BD0005A54F /* SnapKit */; };
+		D3A627FC2D6C80560005A54F /* TasksCoreData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = D3A627FA2D6C80560005A54F /* TasksCoreData.xcdatamodeld */; };
+		D3A627FF2D6C80E20005A54F /* TaskEntity+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3A627FE2D6C80E20005A54F /* TaskEntity+CoreDataProperties.swift */; };
+		D3A628002D6C80E20005A54F /* TaskEntity+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3A627FD2D6C80E20005A54F /* TaskEntity+CoreDataClass.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		D3A627672D64A5080005A54F /* DoneItEfMob.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DoneItEfMob.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D3A627FB2D6C80560005A54F /* TasksCoreData.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = TasksCoreData.xcdatamodel; sourceTree = "<group>"; };
+		D3A627FD2D6C80E20005A54F /* TaskEntity+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TaskEntity+CoreDataClass.swift"; sourceTree = "<group>"; };
+		D3A627FE2D6C80E20005A54F /* TaskEntity+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TaskEntity+CoreDataProperties.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -50,6 +56,9 @@
 		D3A6275E2D64A5070005A54F = {
 			isa = PBXGroup;
 			children = (
+				D3A627FD2D6C80E20005A54F /* TaskEntity+CoreDataClass.swift */,
+				D3A627FE2D6C80E20005A54F /* TaskEntity+CoreDataProperties.swift */,
+				D3A627FA2D6C80560005A54F /* TasksCoreData.xcdatamodeld */,
 				D3A627692D64A5080005A54F /* DoneItEfMob */,
 				D3A627682D64A5080005A54F /* Products */,
 			);
@@ -141,6 +150,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D3A627FF2D6C80E20005A54F /* TaskEntity+CoreDataProperties.swift in Sources */,
+				D3A628002D6C80E20005A54F /* TaskEntity+CoreDataClass.swift in Sources */,
+				D3A627FC2D6C80560005A54F /* TasksCoreData.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -371,6 +383,19 @@
 			productName = SnapKit;
 		};
 /* End XCSwiftPackageProductDependency section */
+
+/* Begin XCVersionGroup section */
+		D3A627FA2D6C80560005A54F /* TasksCoreData.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				D3A627FB2D6C80560005A54F /* TasksCoreData.xcdatamodel */,
+			);
+			currentVersion = D3A627FB2D6C80560005A54F /* TasksCoreData.xcdatamodel */;
+			path = TasksCoreData.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = D3A6275F2D64A5070005A54F /* Project object */;
 }

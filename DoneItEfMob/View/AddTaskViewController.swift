@@ -29,7 +29,6 @@ final class AddTaskViewController: UIViewController {
         let view = UILabel()
         view.font = .systemFont(ofSize: 12, weight: .regular)
         view.textColor = .lightGrayBackground.withAlphaComponent(0.5)
-        view.text = "09/10/24"
         view.textAlignment = .left
         return view
     }()

@@ -188,7 +188,7 @@ extension TasksViewController: UITableViewDelegate {
                 guard let self else { return }
                 print("Удалить задачу")
                 self.hideOverlay(UITapGestureRecognizer())
-                self.presenter.deleteTask(taskViewModels[indexPath.row], from: taskViewModels)
+                self.presenter.deleteTask(taskViewModels[indexPath.row])
             }
             
             self.actionPanel = actionPanel
